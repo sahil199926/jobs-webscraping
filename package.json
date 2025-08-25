@@ -1,0 +1,39 @@
+{
+  "name": "naukri-job-scraper",
+  "version": "1.0.0",
+  "description": "A Node.js web scraper for Naukri job portal with MongoDB integration",
+  "main": "src/scraper.js",
+  "scripts": {
+    "start": "node src/scraper.js",
+    "dev": "nodemon src/scraper.js",
+    "test-db": "node src/database.js",
+    "analytics": "node src/analytics.js",
+    "test": "node test-scraper.js test",
+    "scrape": "node test-scraper.js scrape",
+    "run": "node test-scraper.js run",
+    "db:stats": "node src/database.js",
+    "db:clean": "node -e \"const DB = require('./src/database'); const db = new DB(); db.connect().then(() => db.clearOldJobs(30)).then(() => db.close());\""
+  },
+  "keywords": [
+    "web-scraping",
+    "indeed",
+    "jobs",
+    "mongodb",
+    "puppeteer"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "dotenv": "^16.3.1",
+    "mongodb": "^6.3.0",
+    "puppeteer": "^24.17.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "user-agents": "^1.0.1429"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+*.log
+.DS_Store
+.vscode/
+dist/
+build/
+temp/
+*.tmp
+*.temp
+coverage/
+.nyc_output/
+.npm/
+.eslintcache
+.parcel-cache/
