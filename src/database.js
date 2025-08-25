@@ -81,7 +81,8 @@ class DatabaseManager {
       console.log(`🎯 Experience Level: ${jobDocument.experienceLevel}`);
       console.log(`🏠 Work Mode: ${jobDocument.workMode}`);
       console.log(`⭐ Company Rating: ${jobDocument.companyRating || "N/A"}`);
-      console.log(`🔗 Source URL: ${jobDocument.sourceUrl || "N/A"}`);
+      console.log(`� Posted: ${jobDocument.postedDate || "N/A"}`);
+      console.log(`�🔗 Source URL: ${jobDocument.sourceUrl || "N/A"}`);
       console.log(`📊 Data Quality Score: ${validation.score}%`);
 
       if (jobDocument.skills.length > 0) {

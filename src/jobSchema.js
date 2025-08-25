@@ -64,6 +64,9 @@ class JobSchema {
       // Skills (extracted from description and requirements)
       skills: this.extractSkills(jobData.description, jobData.requirements),
 
+      // Posting Information
+      postedDate: this.sanitizeString(jobData.postedDate) || null,
+
       // Timestamps
       scrapedAt: now,
       createdAt: now,
@@ -232,7 +235,14 @@ class JobSchema {
    * @returns {Object} - Data quality information
    */
   static calculateDataQuality(jobData) {
-    const fields = ["title", "company", "location", "description", "jobTypes"];
+    const fields = [
+      "title",
+      "company",
+      "location",
+      "description",
+      "jobTypes",
+      "postedDate",
+    ];
     const filledFields = fields.filter(
       (field) => jobData[field] && jobData[field].length > 0
     );
@@ -305,6 +315,7 @@ class JobSchema {
       { key: { company: 1 }, name: "company_index" },
       { key: { location: 1 }, name: "location_index" },
       { key: { scrapedAt: -1 }, name: "scraped_date_index" },
+      { key: { postedDate: -1 }, name: "posted_date_index" },
       { key: { experienceLevel: 1 }, name: "experience_level_index" },
       { key: { workMode: 1 }, name: "work_mode_index" },
 

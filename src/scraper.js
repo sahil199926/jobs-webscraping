@@ -217,6 +217,12 @@ class JobScraper {
       const company = companyElement.text().trim() || "Unknown Company";
       const companyUrl = companyElement.attr("href");
 
+      // Extract company rating
+      const ratingElement = $job.find(".rating .main-2");
+      const companyRating = ratingElement.text().trim()
+        ? parseFloat(ratingElement.text().trim())
+        : null;
+
       // Extract experience
       const experienceElement = $job.find(".expwdth");
       const experience =
@@ -246,25 +252,64 @@ class JobScraper {
       // Assume full-time for Naukri jobs
       const jobType = "Full-time";
 
-      // Extract skills from description (simple keyword extraction)
+      // Extract skills from tags section
+      const skillsFromTags = [];
+      $job.find(".tags-gt .tag-li").each((i, tagElement) => {
+        const skill = $(tagElement).text().trim();
+        if (skill) {
+          skillsFromTags.push(skill);
+        }
+      });
+
+      // Fallback: Extract skills from description using keyword matching if no tags found
       const skillKeywords = [
         "JavaScript",
         "Python",
         "Java",
         "React",
         "Angular",
+        "Vue",
         "Node.js",
         "TypeScript",
         "AWS",
         "Docker",
         "MongoDB",
+        "MySQL",
+        "PostgreSQL",
         "SQL",
+        "NoSQL",
+        "Git",
+        "HTML",
+        "CSS",
+        "Kubernetes",
+        "Jenkins",
+        "TensorFlow",
+        "PyTorch",
+        "Scikit-learn",
+        "Bootstrap",
+        "Spring Boot",
+        "Django",
+        "Flask",
+        "C++",
+        "C#",
+        ".NET",
+        "PHP",
+        "Ruby",
+        "Go",
+        "Rust",
+        "Swift",
+        "Kotlin",
       ];
-      const skills = skillKeywords.filter(
+
+      const skillsFromDescription = skillKeywords.filter(
         (skill) =>
           description.toLowerCase().includes(skill.toLowerCase()) ||
           title.toLowerCase().includes(skill.toLowerCase())
       );
+
+      // Combine skills from tags and description, prioritizing tags
+      const skills =
+        skillsFromTags.length > 0 ? skillsFromTags : skillsFromDescription;
 
       return {
         jobId: jobId,
@@ -298,7 +343,7 @@ class JobScraper {
         requirements: skills,
         benefits: [],
         skills: skills,
-        companyRating: null,
+
         hasEasilyApply: true,
         source: "naukri.com",
         scrapedAt: new Date(),
