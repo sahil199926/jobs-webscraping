@@ -75,7 +75,6 @@ class DatabaseManager {
       console.log(`📝 Title: ${jobDocument.title}`);
       console.log(`🏢 Company: ${jobDocument.company}`);
       console.log(`📍 Location: ${jobDocument.location}`);
-      console.log(`💰 Salary: ${jobDocument.salary.raw || "Not specified"}`);
       console.log(
         `💼 Job Types: ${jobDocument.jobTypes.join(", ") || "Not specified"}`
       );
@@ -220,51 +219,6 @@ class DatabaseManager {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  async getRecentJobs(limit = 10) {
-    try {
-      const jobs = await this.collection
-        .find({})
-        .sort({ scrapedAt: -1 })
-        .limit(limit)
-        .toArray();
-
-      console.log(`\n📋 Last ${jobs.length} scraped jobs:`);
-      jobs.forEach((job, index) => {
-        console.log(
-          `${index + 1}. ${job.title} at ${job.company} - ${job.location}`
-        );
-      });
-
-      return jobs;
-    } catch (error) {
-      console.error("❌ Error fetching jobs:", error.message);
-      return [];
-    }
-  }
-
-  async getJobsByCompany(companyName, limit = 5) {
-    try {
-      const jobs = await this.collection
-        .find({ company: new RegExp(companyName, "i") })
-        .limit(limit)
-        .toArray();
-
-      console.log(`\n🏢 Jobs at companies matching "${companyName}":`);
-      jobs.forEach((job, index) => {
-        console.log(
-          `${index + 1}. ${job.title} at ${job.company} - ${
-            job.salary || "Salary not specified"
-          }`
-        );
-      });
-
-      return jobs;
-    } catch (error) {
-      console.error("❌ Error fetching jobs by company:", error.message);
-      return [];
-    }
-  }
-
   async getJobStats() {
     try {
       const total = await this.collection.countDocuments();
@@ -277,11 +231,6 @@ class DatabaseManager {
 
       const companies = await this.collection.distinct("company");
       const locations = await this.collection.distinct("location");
-
-      // Get salary statistics
-      const salaryJobs = await this.collection
-        .find({ salary: { $exists: true, $ne: null } })
-        .toArray();
 
       // Get job types
       const jobTypesAgg = await this.collection
@@ -297,7 +246,6 @@ class DatabaseManager {
       console.log(`📅 Jobs scraped today: ${todayCount}`);
       console.log(`🏢 Unique companies: ${companies.length}`);
       console.log(`📍 Unique locations: ${locations.length}`);
-      console.log(`💰 Jobs with salary info: ${salaryJobs.length}`);
 
       console.log("\n📋 Top Job Types:");
       jobTypesAgg.slice(0, 5).forEach((type, index) => {
@@ -309,31 +257,11 @@ class DatabaseManager {
         todayCount,
         companiesCount: companies.length,
         locationsCount: locations.length,
-        salaryJobsCount: salaryJobs.length,
         topJobTypes: jobTypesAgg.slice(0, 5),
       };
     } catch (error) {
       console.error("❌ Error getting job stats:", error.message);
       return null;
-    }
-  }
-
-  async clearOldJobs(daysOld = 30) {
-    try {
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - daysOld);
-
-      const result = await this.collection.deleteMany({
-        scrapedAt: { $lt: cutoffDate },
-      });
-
-      console.log(
-        `🗑️  Deleted ${result.deletedCount} jobs older than ${daysOld} days`
-      );
-      return result.deletedCount;
-    } catch (error) {
-      console.error("❌ Error clearing old jobs:", error.message);
-      return 0;
     }
   }
 

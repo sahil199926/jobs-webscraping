@@ -33,15 +33,6 @@ class JobSchema {
             .filter(Boolean)
         : [],
 
-      // Salary Information
-      salary: {
-        raw: this.sanitizeString(jobData.salary) || null,
-        min: this.extractSalaryNumber(jobData.salary, "min") || null,
-        max: this.extractSalaryNumber(jobData.salary, "max") || null,
-        currency: this.extractCurrency(jobData.salary) || "INR",
-        period: this.extractSalaryPeriod(jobData.salary) || null,
-      },
-
       // Job Metadata
       jobTypes: Array.isArray(jobData.jobTypes)
         ? jobData.jobTypes
@@ -96,87 +87,6 @@ class JobSchema {
   static sanitizeString(str) {
     if (typeof str !== "string") return null;
     return str.trim().replace(/\s+/g, " ") || null;
-  }
-
-  /**
-   * Extracts salary numbers from salary string
-   * @param {string} salaryStr - Salary string
-   * @param {string} type - 'min' or 'max'
-   * @returns {number|null} - Extracted salary number
-   */
-  static extractSalaryNumber(salaryStr, type = "min") {
-    if (!salaryStr) return null;
-
-    // Remove currency symbols and commas
-    const cleanStr = salaryStr.replace(/[₹$,]/g, "");
-
-    // Extract numbers
-    const numbers = cleanStr.match(/\d+(?:,\d+)*(?:\.\d+)?/g);
-    if (!numbers || numbers.length === 0) return null;
-
-    // Convert to actual numbers
-    const numericValues = numbers.map((num) =>
-      parseFloat(num.replace(/,/g, ""))
-    );
-
-    if (numericValues.length === 1) {
-      return numericValues[0];
-    } else if (numericValues.length >= 2) {
-      return type === "min"
-        ? Math.min(...numericValues)
-        : Math.max(...numericValues);
-    }
-
-    return null;
-  }
-
-  /**
-   * Extracts currency from salary string
-   * @param {string} salaryStr - Salary string
-   * @returns {string} - Currency code
-   */
-  static extractCurrency(salaryStr) {
-    if (!salaryStr) return "INR";
-
-    if (salaryStr.includes("₹")) return "INR";
-    if (salaryStr.includes("$")) return "USD";
-    if (salaryStr.includes("€")) return "EUR";
-    if (salaryStr.includes("£")) return "GBP";
-
-    return "INR"; // Default for India
-  }
-
-  /**
-   * Extracts salary period from salary string
-   * @param {string} salaryStr - Salary string
-   * @returns {string|null} - Salary period
-   */
-  static extractSalaryPeriod(salaryStr) {
-    if (!salaryStr) return null;
-
-    const lowerStr = salaryStr.toLowerCase();
-
-    if (
-      lowerStr.includes("year") ||
-      lowerStr.includes("annually") ||
-      lowerStr.includes("per annum")
-    ) {
-      return "yearly";
-    }
-    if (lowerStr.includes("month") || lowerStr.includes("monthly")) {
-      return "monthly";
-    }
-    if (lowerStr.includes("week") || lowerStr.includes("weekly")) {
-      return "weekly";
-    }
-    if (lowerStr.includes("day") || lowerStr.includes("daily")) {
-      return "daily";
-    }
-    if (lowerStr.includes("hour") || lowerStr.includes("hourly")) {
-      return "hourly";
-    }
-
-    return "yearly"; // Default assumption
   }
 
   /**
@@ -322,14 +232,7 @@ class JobSchema {
    * @returns {Object} - Data quality information
    */
   static calculateDataQuality(jobData) {
-    const fields = [
-      "title",
-      "company",
-      "location",
-      "description",
-      "salary",
-      "jobTypes",
-    ];
+    const fields = ["title", "company", "location", "description", "jobTypes"];
     const filledFields = fields.filter(
       (field) => jobData[field] && jobData[field].length > 0
     );
@@ -404,8 +307,6 @@ class JobSchema {
       { key: { scrapedAt: -1 }, name: "scraped_date_index" },
       { key: { experienceLevel: 1 }, name: "experience_level_index" },
       { key: { workMode: 1 }, name: "work_mode_index" },
-      { key: { "salary.min": -1 }, name: "salary_min_index" },
-      { key: { "salary.max": -1 }, name: "salary_max_index" },
 
       // Compound indexes
       { key: { company: 1, scrapedAt: -1 }, name: "company_date_index" },
@@ -475,14 +376,6 @@ class JobSchema {
         jobDocument.companyRating > 5)
     ) {
       warnings.push("Company rating should be between 0 and 5");
-    }
-
-    if (
-      jobDocument.salary.min &&
-      jobDocument.salary.max &&
-      jobDocument.salary.min > jobDocument.salary.max
-    ) {
-      warnings.push("Minimum salary is greater than maximum salary");
     }
 
     // Data quality check

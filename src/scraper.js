@@ -271,7 +271,6 @@ class JobScraper {
         title: title,
         company: company,
         location: location,
-        salary: null, // Naukri doesn't show salary in search results typically
         jobType: jobType,
         jobTypes: [jobType],
         experience: experience,
@@ -327,10 +326,6 @@ class JobScraper {
       // Extract location (RemoteOK is all remote)
       const location = "Remote";
 
-      // Extract salary if available
-      const salaryElement = $job.find(".salary");
-      const salary = salaryElement.text().trim() || null;
-
       // Extract tags/skills
       const tagElements = $job.find(".tags .tag");
       const skills = [];
@@ -359,7 +354,6 @@ class JobScraper {
         title: title,
         company: company,
         location: location,
-        salary: salary,
         jobType: jobType,
         jobTypes: [jobType],
         experience: null,
@@ -440,15 +434,6 @@ class JobScraper {
               .text()
               .trim() || "Full-time";
 
-          // Extract salary information
-          const salaryElement = $job
-            .find("span.pl-1.text-xs")
-            .filter((i, el) => {
-              const text = $(el).text();
-              return text.includes("$") || text.includes("k");
-            });
-          const salary = salaryElement.first().text().trim() || null;
-
           // Extract location
           const locationElement = $job
             .find("span.pl-1.text-xs")
@@ -487,7 +472,6 @@ class JobScraper {
             title: title,
             company: companyName,
             location: location,
-            salary: salary,
             jobType: jobType,
             jobTypes: [jobType],
             experience: experience,

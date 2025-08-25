@@ -6,13 +6,8 @@
   "scripts": {
     "start": "node src/scraper.js",
     "dev": "nodemon src/scraper.js",
-    "test-db": "node src/database.js",
-    "analytics": "node src/analytics.js",
-    "test": "node test-scraper.js test",
     "scrape": "node test-scraper.js scrape",
-    "run": "node test-scraper.js run",
-    "db:stats": "node src/database.js",
-    "db:clean": "node -e \"const DB = require('./src/database'); const db = new DB(); db.connect().then(() => db.clearOldJobs(30)).then(() => db.close());\""
+    "run": "node test-scraper.js run"
   },
   "keywords": [
     "web-scraping",
