@@ -3,7 +3,6 @@
 
 - 🚀 **Automated Web Scraping**: Uses Puppeteer for dynamic content scraping
 - 🗄️ **MongoDB Integration**: Stores job data with duplicate prevention
-- 📊 **Analytics Dashboard**: Provides insights on scraped job data
 - ⚡ **Configurable**: Easy to customize scraping parameters
 - 🔄 **Rate Limiting**: Built-in delays to respect website policies
 - 📈 **Progress Tracking**: Real-time scraping progress updates
@@ -18,19 +17,6 @@
 npm install
 ```
 
-3. Configure your environment variables in `.env`:
-
-```env
-# MongoDB Configuration
-MONGODB_URI=mongodb+srv://sahil:<your_db_password>@attendancecluster.to6lv.mongodb.net/
-DB_NAME=jobPortal
-COLLECTION_NAME=jobs
-
-# Scraping Configuration
-DELAY_BETWEEN_REQUESTS=2000
-MAX_PAGES=5
-HEADLESS=true
-```
 
 ## Usage
 
@@ -50,14 +36,6 @@ Run with automatic restarts on file changes:
 npm run dev
 ```
 
-### Analytics
-
-Run analytics on scraped data:
-
-```bash
-node src/analytics.js
-```
-
 ## Configuration
 
 ### Environment Variables
@@ -74,7 +52,7 @@ node src/analytics.js
 Edit the `indeedUrl` variable in `src/scraper.js` to change search criteria:
 
 ```javascript
-const indeedUrl = "https://in.indeed.com/jobs?q=your+search+terms&l=location";
+const indeedUrl = "https://www.naukri.com/software-engineer-jobs?k=software+engineer&nignbevent_src=jobsearchDeskGNB";
 ```
 
 ## Data Structure
@@ -100,16 +78,6 @@ Each job record contains the following fields:
   source: "indeed.com"
 }
 ```
-
-## Analytics Features
-
-The analytics module provides insights including:
-
-- 🏢 **Top Companies**: Companies with most job postings
-- 📍 **Location Distribution**: Job distribution by location
-- 💰 **Salary Analysis**: Salary range breakdown
-- 💼 **Job Types**: Distribution of job types
-- 🕐 **Recent Activity**: Jobs scraped in recent hours
 
 ## Error Handling
 
@@ -157,17 +125,3 @@ The scraper includes comprehensive error handling for:
 - Implement appropriate rate limiting
 - Use scraped data responsibly and ethically
 - Consider reaching out to Indeed for official API access for commercial use
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-# jobs-webscraping
